@@ -17,7 +17,7 @@ public class ProductControllerAdvisor extends ResponseEntityExceptionHandler {
 
 
     @ExceptionHandler(ProductNotFoundException.class)
-    public ResponseEntity<Object> handleLocationNotFoundException(final ProductNotFoundException ex,final WebRequest request){
+    public ResponseEntity<Object> handleProductNotFoundException(final ProductNotFoundException ex,final WebRequest request){
 
         return getResponseEntity(ex.getMessage());
     }
