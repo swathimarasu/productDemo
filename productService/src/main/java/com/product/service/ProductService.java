@@ -2,16 +2,20 @@ package com.product.service;
 
 
 import com.product.avalability.ProductDetails;
+import com.product.avalability.ProductsDetailsListResponse;
 import com.product.dao.ProductRepository;
 import com.product.exception.ProductNotFoundException;
 import com.product.mapper.ProductMapper;
 import com.product.model.Product;
+import org.apache.commons.collections4.IterableUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductService {
@@ -45,8 +49,6 @@ public class ProductService {
         }
 
         return productMapper.toProductDetailDoc(product.get());
-
-
     }
 
     public void removeProductById(Long productId) {
@@ -64,4 +66,33 @@ public class ProductService {
 
     }
 
+    public ProductsDetailsListResponse getProductsDetailsList(final String name, final String deptName) {
+
+        final List<Product> products = getProducts(name, deptName);
+        if(CollectionUtils.isEmpty(products)){
+          return ProductsDetailsListResponse.builder()
+                  .productDetails(Collections.emptyList())
+                  .build();
+      }
+      return ProductsDetailsListResponse.builder().productDetails(products.stream()
+              .filter(Objects::nonNull)
+              .map(product -> productMapper.toProductDetailDoc(product))
+              .collect(Collectors.toList())).build();
+
+    }
+
+
+    private List<Product> getProducts(String name, String deptName) {
+
+        if(StringUtils.isNotBlank(name) && StringUtils.isNotBlank(deptName)){
+            return productRepository.findByProductAndDeptNames(name,deptName);
+
+        }else if(StringUtils.isNotBlank(name)){
+            return productRepository.findByProductName(name);
+
+        }else if(StringUtils.isNotBlank(deptName)){
+            return productRepository.findByDeptName(deptName);
+        }
+        return Collections.emptyList();
+    }
 }

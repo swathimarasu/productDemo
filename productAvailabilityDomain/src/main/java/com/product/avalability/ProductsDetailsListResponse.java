@@ -11,7 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ProductsAvailableResponse {
+public class ProductsDetailsListResponse {
 
-    private List<ProductsAvailableDoc> productsAvailableDocs;
+    private List<ProductDetails> productDetails;
 }

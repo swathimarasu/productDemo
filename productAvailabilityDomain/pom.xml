@@ -7,6 +7,7 @@
     <groupId>com.product.availability</groupId>
     <artifactId>com.product.availability</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <name>productAvailabilityDomain</name>
 
     <dependencies>
         <dependency>
@@ -18,6 +19,7 @@
     </dependencies>
 
     <build>
+        <finalName>productAvailabilityDomain</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

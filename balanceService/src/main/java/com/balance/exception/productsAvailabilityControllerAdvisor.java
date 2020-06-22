@@ -16,27 +16,25 @@ import java.util.Map;
 public class productsAvailabilityControllerAdvisor extends ResponseEntityExceptionHandler {
 
 
-    @ExceptionHandler(ProductNotFoundException.class)
-    public ResponseEntity<Object> handleProductNotFoundException(final ProductNotFoundException ex,
-                                                                 final WebRequest request){
-
-        return getResponseEntity(ex.getMessage());
-    }
-
     @ExceptionHandler(MicroServiceException.class)
     public ResponseEntity<Object> handleMicroServiceException(final MicroServiceException ex,
                                                                  final WebRequest request){
 
-        return getResponseEntity(ex.getMessage());
-    }
-
-
-
-    private ResponseEntity<Object> getResponseEntity(String message) {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", LocalDateTime.now());
-        body.put("message", message);
+        body.put("message", ex.getMessage());
 
         return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(InvalidDataException.class)
+    public ResponseEntity<Object> handleInvalidDataException(final InvalidDataException ex,
+                                                              final WebRequest request){
+
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("message", ex.getMessage());
+
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 }

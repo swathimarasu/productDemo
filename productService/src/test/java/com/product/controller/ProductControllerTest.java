@@ -2,13 +2,12 @@ package com.product.controller;
 
 
 import com.product.avalability.ProductDetails;
-import com.product.controller.ProductController;
+import com.product.avalability.ProductsDetailsListResponse;
 import com.product.model.Product;
 import com.product.service.ProductService;
 import org.jeasy.random.EasyRandom;
 import org.jeasy.random.EasyRandomParameters;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -24,8 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.junit.Assert.assertEquals;
@@ -130,6 +128,24 @@ public class ProductControllerTest {
         assertEquals(HttpStatus.OK,result.getStatusCode());
         assertTrue(result.hasBody());
         assertEquals(productDetails,result.getBody());
+    }
+
+    @Test
+    public void testGetProductDetailsList(){
+
+        final String itemName = easyRandom.nextObject(String.class);
+        final String deptName = easyRandom.nextObject(String.class);
+
+        final ProductsDetailsListResponse productDetails = easyRandom.nextObject(ProductsDetailsListResponse.class);
+
+        when(productService.getProductsDetailsList(anyString(),anyString())).thenReturn(productDetails);
+
+        final ResponseEntity<ProductsDetailsListResponse> result = productController.getProductDetailsList(itemName,deptName);
+        assertEquals(HttpStatus.OK,result.getStatusCode());
+        assertTrue(result.hasBody());
+        assertEquals(productDetails,result.getBody());
+
+
     }
 
 }

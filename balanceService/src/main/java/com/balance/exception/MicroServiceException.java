@@ -2,13 +2,10 @@ package com.balance.exception;
 
 
 
-public class ProductNotFoundException extends RuntimeException {
+public class MicroServiceException extends RuntimeException {
 
-    public ProductNotFoundException(){
+    public MicroServiceException(String message){
 
-    }
-
-    public ProductNotFoundException(long productId){
-        super(String.format("Location not found for %d",productId));
+        super(message);
     }
 }

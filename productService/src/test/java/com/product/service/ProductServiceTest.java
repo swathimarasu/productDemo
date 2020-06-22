@@ -1,5 +1,6 @@
 package com.product.service;
 
+import com.product.avalability.ProductsDetailsListResponse;
 import com.product.exception.ProductNotFoundException;
 import com.product.avalability.ProductDetails;
 import com.product.dao.ProductRepository;
@@ -36,6 +37,10 @@ public class ProductServiceTest {
 
     @Mock
     private ProductRepository productRepository;
+
+    private static final ProductsDetailsListResponse DEFAULT_RESPONSE = ProductsDetailsListResponse.builder()
+            .productDetails(Collections.emptyList())
+            .build();
 
     @Before
     public void setUp(){
@@ -181,6 +186,94 @@ public class ProductServiceTest {
         final ProductDetails result = productService.update(product,productId);
 
         assertNull(result);
+
+    }
+
+    @Test
+    public void testProductDetailsEmptyList(){
+
+        final String itemName = easyRandom.nextObject(String.class);
+        final String deptName = easyRandom.nextObject(String.class);
+
+
+        when(productRepository.findByProductAndDeptNames(anyString(),anyString())).thenReturn(new ArrayList<>());
+
+        final ProductsDetailsListResponse result = productService.getProductsDetailsList(itemName,deptName);
+
+        assertEquals(DEFAULT_RESPONSE,result);
+        verify(productMapper,never()).toProductDetailDoc(any());
+
+
+
+    }
+
+    @Test
+    public void testProductDetailsWithNullInputsEmptyList(){
+
+
+        final ProductsDetailsListResponse result = productService.getProductsDetailsList(null,null);
+
+        assertEquals(DEFAULT_RESPONSE,result);
+        verify(productRepository,never()).findByProductAndDeptNames(anyString(),anyString());
+        verify(productRepository,never()).findByDeptName(anyString());
+        verify(productRepository,never()).findByProductName(anyString());
+        verify(productMapper,never()).toProductDetailDoc(any());
+
+
+
+    }
+
+    @Test
+    public void testProductDetailsWithOnlyProductNameEmptyList(){
+
+        final String itemName = easyRandom.nextObject(String.class);
+
+
+        when(productRepository.findByProductName(anyString())).thenReturn(new ArrayList<>());
+
+        final ProductsDetailsListResponse result = productService.getProductsDetailsList(itemName,null);
+
+        assertEquals(DEFAULT_RESPONSE,result);
+        verify(productMapper,never()).toProductDetailDoc(any());
+
+
+    }
+
+    @Test
+    public void testProductDetailsWithOnlyDeptNameEmptyList(){
+
+        final String deptName = easyRandom.nextObject(String.class);
+
+
+        when(productRepository.findByDeptName(anyString())).thenReturn(new ArrayList<>());
+
+        final ProductsDetailsListResponse result = productService.getProductsDetailsList(null,deptName);
+
+        assertEquals(DEFAULT_RESPONSE,result);
+
+        verify(productMapper,never()).toProductDetailDoc(any());
+
+    }
+
+    @Test
+    public void testProductDetailsList(){
+
+        final String deptName = easyRandom.nextObject(String.class);
+        final String productName = easyRandom.nextObject(String.class);
+
+        final ProductDetails productDetails = easyRandom.nextObject(ProductDetails.class);
+
+        final List<Product> products = Arrays.asList(easyRandom.nextObject(Product[].class));
+
+        when(productRepository.findByProductAndDeptNames(anyString(),anyString())).thenReturn(products);
+        when(productMapper.toProductDetailDoc(any())).thenReturn(productDetails);
+
+        final ProductsDetailsListResponse result = productService.getProductsDetailsList(productName,deptName);
+
+        assertNotNull(result.getProductDetails());
+        assertEquals(productDetails.getDeptName(),result.getProductDetails().get(0).getDeptName());
+
+        verify(productMapper,times(products.size())).toProductDetailDoc(any());
 
     }
 

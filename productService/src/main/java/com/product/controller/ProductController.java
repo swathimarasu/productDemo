@@ -1,6 +1,7 @@
 package com.product.controller;
 
 import com.product.avalability.ProductDetails;
+import com.product.avalability.ProductsDetailsListResponse;
 import com.product.model.Product;
 import com.product.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +57,7 @@ public class ProductController {
 
     }
 
+
     @RequestMapping(value="/update/{productId}",method = RequestMethod.PUT,produces = "application/json")
     public ResponseEntity<ProductDetails>  updateProduct(@RequestBody final Product product,
                                                     @PathVariable("productId") final Long productId){
@@ -66,13 +68,24 @@ public class ProductController {
 
     }
 
-
     @RequestMapping(value="/{productId}",method = RequestMethod.DELETE,produces = "application/json")
     public ResponseEntity<Void>  removeProduct(@PathVariable("productId") final Long productId){
 
         log.info("remove Product details from the database by productId",productId);
         productService.removeProductById(productId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+
+    }
+
+    @RequestMapping(value="/details",method = RequestMethod.GET,produces = "application/json")
+    public ResponseEntity<ProductsDetailsListResponse>  getProductDetailsList(@RequestParam(value = "product",required = false)
+                                                                              final String productName,
+                                                                              @RequestParam(value="department",required = false)
+                                                                              final String departmentName){
+
+        log.info("retrieve product details from the database.");
+        final ProductsDetailsListResponse productDetails = productService.getProductsDetailsList(productName,departmentName);
+        return new ResponseEntity<>(productDetails,HttpStatus.OK);
 
     }
 }

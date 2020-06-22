@@ -3,6 +3,7 @@ package com.balance.controller;
 import com.balance.model.AvailableProductEntity;
 import com.balance.service.ProductsAvailabilityService;
 import com.product.avalability.ProductsAvailableDoc;
+import com.product.avalability.ProductsAvailableResponse;
 import org.jeasy.random.EasyRandom;
 import org.jeasy.random.EasyRandomParameters;
 import org.junit.BeforeClass;
@@ -83,5 +84,25 @@ public class ProductsAvailabilityControllerTest {
         assertEquals(HttpStatus.OK, result.getStatusCode());
         assertTrue(result.hasBody());
         assertEquals(availableDocs, result.getBody());
+    }
+
+    @Test
+    public void testGetAvailableProducts(){
+
+        final String productName = easyRandom.nextObject(String.class);
+        final String departmentName = easyRandom.nextObject(String.class);
+
+        final ProductsAvailableResponse availableDocs = easyRandom.nextObject(ProductsAvailableResponse.class);
+
+        when(productsAvailabilityService.getAvailableProducts(productName,departmentName)).thenReturn(availableDocs);
+
+        final ResponseEntity<ProductsAvailableResponse> result = productsAvailabilityController.getAvailableProducts(productName,departmentName);
+
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertTrue(result.hasBody());
+        assertEquals(availableDocs, result.getBody());
+
+
+
     }
 }
